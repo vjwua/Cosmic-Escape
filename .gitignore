@@ -1,0 +1,6 @@
+Library/Artifacts/*
+Library/PlayerDataCache/*
+Library/PackageCache/*
+Library/StateCache/*
+Library/ShaderCache/*
+Library/TempArtifacts/*
