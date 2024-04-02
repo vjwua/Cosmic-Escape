@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    Rigidbody rigidBody;
     [SerializeField] float mainThrust = 100.0f;
     [SerializeField] float rotationThrust = 100.0f;
+    [SerializeField] AudioClip mainEngine;
+
+    [SerializeField] ParticleSystem rocketEngineParticles;
+
+    [SerializeField] ParticleSystem leftSideThrusterParticles;
+
+    [SerializeField] ParticleSystem rightSideThrusterParticles;
+
+    Rigidbody rigidBody;
+    AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -25,7 +35,10 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {   
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+            StartThrusting();
+        }
+        else {
+            StopThrusting();
         }
     }
 
@@ -33,12 +46,51 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A))
         {
-            ApplyRotation(Vector3.forward);
+            RightRotating();
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            ApplyRotation(Vector3.back);
+            LeftRotating();
         }
+        else {
+            StopRotating();
+        }
+    }
+
+    void StartThrusting()
+    {
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+        if (!audioSource.isPlaying) {
+            audioSource.PlayOneShot(mainEngine);
+        }
+        if (!rocketEngineParticles.isPlaying) {
+            rocketEngineParticles.Play();
+        }
+    }
+
+    void StopThrusting()
+    {
+        audioSource.Stop();
+        rocketEngineParticles.Stop();
+    }
+
+    void LeftRotating() {
+        ApplyRotation(Vector3.back);
+        if (!leftSideThrusterParticles.isPlaying) {
+            leftSideThrusterParticles.Play();
+        }
+    }
+
+    void RightRotating() {
+        ApplyRotation(Vector3.forward);
+        if (!rightSideThrusterParticles.isPlaying) {
+            rightSideThrusterParticles.Play();
+        }
+    }
+
+    void StopRotating() {
+        leftSideThrusterParticles.Stop();
+        rightSideThrusterParticles.Stop();
     }
 
     void ApplyRotation(Vector3 keycodeVector)
